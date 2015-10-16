@@ -8,10 +8,10 @@ vector<unordered_set<size_t>> build_graph(const MKLandscape& landscape) {
   vector<unordered_set<size_t>> graph(landscape.get_length(),
                                       unordered_set<size_t>());
   const auto& subfunctions = landscape.get_subfunctions();
-  for (const auto & subfunction : subfunctions) {
+  for (const auto& subfunction : subfunctions) {
     // all variables which share a subfunction have an edge
-    for (const auto & x : subfunction.variables) {
-      for (const auto & y : subfunction.variables) {
+    for (const auto x : subfunction.variables) {
+      for (const auto y : subfunction.variables) {
         if (x != y) {
           graph[x].insert(y);
         }
@@ -54,10 +54,10 @@ void recurse(const vector<unordered_set<size_t>>& graph, size_t v,
   vector<size_t> closed_here;
   // open everything adjacent to v
   unordered_set<size_t> openset(prevopen);
-  const auto & adjacent = graph.at(v);
+  const auto& adjacent = graph.at(v);
   openset.insert(adjacent.begin(), adjacent.end());
   // recurse using each not-closed option
-  for (const auto& working : openset) {
+  for (const auto working : openset) {
     if (closed.count(working) == 0) {
       closed_here.push_back(working);
       closed.insert(working);
@@ -65,7 +65,7 @@ void recurse(const vector<unordered_set<size_t>>& graph, size_t v,
     }
   }
   // reopen anything closed at this level
-  for (const auto& working : closed_here) {
+  for (const auto working : closed_here) {
     closed.erase(working);
   }
 }

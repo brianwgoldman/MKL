@@ -62,8 +62,8 @@ MKLandscape::MKLandscape(string filename)
   // Ensures that at some point the length was set correctly
   assert(length != 0);
   // Ensures that all variable indices are within the specified length
-  for (const auto & subfunction : subfunctions) {
-    for (const auto & variable_index : subfunction.variables) {
+  for (const auto& subfunction : subfunctions) {
+    for (const auto variable_index : subfunction.variables) {
       assert(variable_index < length);
     }
   }
@@ -74,7 +74,7 @@ int MKLandscape::evaluate(size_t subfunction_index,
   const auto& subfunction = subfunctions[subfunction_index];
   // Convert the solution's values to an index into the fitness table
   size_t index = 0;
-  for (const auto& neighbor : subfunction.variables) {
+  for (const auto neighbor : subfunction.variables) {
     index = (index << 1) | solution[neighbor];
   }
   return subfunction.values[index];

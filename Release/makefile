@@ -44,7 +44,7 @@ all: MKL
 MKL: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross G++ Linker'
-	g++  -o "MKL" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -std=c++11 -O3 -flto -o "MKL" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

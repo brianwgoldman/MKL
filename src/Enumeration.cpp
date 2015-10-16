@@ -25,7 +25,7 @@ Enumeration::Enumeration(const MKLandscape & landscape_, size_t radius_)
   bit_to_sub.resize(length);
   const auto& subfunctions = landscape.get_subfunctions();
   for (size_t sub = 0; sub < subfunctions.size(); sub++) {
-    for (const auto& bit : subfunctions[sub].variables) {
+    for (const auto bit : subfunctions[sub].variables) {
       bit_to_sub[bit].push_back(sub);
     }
   }
@@ -39,8 +39,8 @@ Enumeration::Enumeration(const MKLandscape & landscape_, size_t radius_)
     if (moves[m].size() == 1) {
       single_bit_moves[moves[m][0]] = m;
     }
-    for (const auto& bit : moves[m]) {
-      for (const auto& sub : bit_to_sub[bit]) {
+    for (const auto bit : moves[m]) {
+      for (const auto sub : bit_to_sub[bit]) {
         move_to_sub[m].insert(sub);
         sub_to_move[sub].insert(m);
       }
@@ -69,7 +69,7 @@ void Enumeration::initialize_deltas() {
     auto score = landscape.evaluate(sub, reference);
     fitness += score;
     // Update the effect each move has on this subfunction
-    for (const auto& move : sub_to_move[sub]) {
+    for (const auto move : sub_to_move[sub]) {
       delta[move] -= score;
       flip_move(move);
       delta[move] += landscape.evaluate(sub, reference);
@@ -80,7 +80,7 @@ void Enumeration::initialize_deltas() {
 
 // Internal function to flip all bits associated with a move
 void Enumeration::flip_move(size_t move_index) {
-  for (const auto& bit : moves[move_index]) {
+  for (const auto bit : moves[move_index]) {
     reference[bit] = not reference[bit];
   }
 }
@@ -91,13 +91,13 @@ int Enumeration::make_flip(size_t index) {
   // update fitness and record it
   fitness += delta[single_bit_moves[index]];
   // For each subfunction affected by this flip
-  for (const auto& sub : bit_to_sub[index]) {
+  for (const auto sub : bit_to_sub[index]) {
     auto pre_move = landscape.evaluate(sub, reference);
     reference[index] = not reference[index];  // Put in the flip
     auto just_move = landscape.evaluate(sub, reference);
     reference[index] = not reference[index];  // Take out move
     // for each move that overlaps the affected subfunction
-    for (const auto& next : sub_to_move[sub]) {
+    for (const auto next : sub_to_move[sub]) {
       flip_move(next);  // Put in next
       auto just_next = landscape.evaluate(sub, reference);
       reference[index] = not reference[index];  // Put in move
@@ -133,7 +133,7 @@ void Enumeration::remap() {
   for (size_t move = 0; move < moves.size(); move++) {
     unordered_set<int> depends;
     // A move depends on all bits in all subfunctions it overlaps
-    for (const auto& sub : move_to_sub[move]) {
+    for (const auto sub : move_to_sub[move]) {
       for (int bit : landscape.get_subfunctions()[sub].variables) {
         depends.insert(bit);
       }
@@ -142,7 +142,7 @@ void Enumeration::remap() {
     move_bin[depends.size()].insert(move);
     location[move] = depends.size();
     // record all of its dependencies
-    for (const auto& bit : depends) {
+    for (const auto bit : depends) {
       bit_to_move[bit].push_back(move);
     }
   }
@@ -170,14 +170,14 @@ void Enumeration::remap() {
 
     // For all bits in all subfunctions related to that move,
     // assign those bits as high as possible
-    for (const auto& sub : move_to_sub[move]) {
+    for (const auto sub : move_to_sub[move]) {
       for (int bit : landscape.get_subfunctions()[sub].variables) {
         // if the bit hasn't been assigned a new position
         if (org_to_new[bit] == -1) {
           org_to_new[bit] = highest_available;
           new_to_org[highest_available] = bit;
           // Update how many dependencies all other moves have
-          for (const auto& affected : bit_to_move[bit]) {
+          for (const auto affected : bit_to_move[bit]) {
             int current = location[affected];
             // shift the affected move down 1 in the move_bin
             move_bin[current].erase(affected);
@@ -199,7 +199,7 @@ void Enumeration::bin_moves() {
   for (size_t move = 0; move < moves.size(); move++) {
     // For each move, find its dependency with the minimum index
     int min_dependency = length;
-    for (const auto& sub : move_to_sub[move]) {
+    for (const auto sub : move_to_sub[move]) {
       for (int bit : landscape.get_subfunctions()[sub].variables) {
         // Use the new ordering to determine "minimum"
         if (min_dependency > org_to_new[bit]) {
